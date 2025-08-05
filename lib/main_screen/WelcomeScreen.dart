@@ -1,3 +1,4 @@
+import 'package:finalproject/main_screen/LoginPage%20.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -12,7 +13,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F5E8), // Light green background
+      backgroundColor: Color.fromRGBO(232, 245, 232, 1), // Light green background
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -229,6 +230,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                      );
                       // Handle next action
                     },
                     style: ElevatedButton.styleFrom(
