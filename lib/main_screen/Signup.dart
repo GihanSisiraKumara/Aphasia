@@ -1,22 +1,21 @@
-import 'package:finalproject/main_screen/Signup.dart';
+import 'package:finalproject/main_screen/LoginPage%20.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+ // Make sure to replace with the correct path to your LoginPage file
 
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupState extends State<Signup> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(232, 245, 232, 1),
       // appBar: AppBar(
@@ -44,13 +43,12 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               // SizedBox(height: 20),
 
-              
-               // Lottie Animation
+              // Lottie Animation
               Container(
                 width: 300,
                 height: 270,
                 child: Lottie.asset(
-                  'assets/animations/share with friends.json',
+                  'assets/animations/Appointment booking with smartphone.json',
                   fit: BoxFit.contain,
                   repeat: true,
                   animate: true,
@@ -61,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Title Text
               const Text(
-                'Welcome back, you\'ve been missed!',
+                'Welcome you\'ve been missed!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
@@ -152,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
-                    'Forgot Password?',
+                    'Ready to Sign Up?',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -179,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                     elevation: 0,
                   ),
                   child: const Text(
-                    'Sign In',
+                    'Sign Up',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -188,7 +186,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              
 
               SizedBox(height: 20),
 
@@ -278,7 +275,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Haven\'t an account? ',
+                    'Allready an account? ',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -290,11 +287,11 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Signup()),
+                            builder: (context) => const LoginPage()),
                       );
                     },
                     child: const Text(
-                      'Sign Up',
+                      'Sign In',
                       style: TextStyle(
                         color: Color(0xFF8B4513),
                         fontSize: 14,
