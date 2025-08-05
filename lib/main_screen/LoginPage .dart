@@ -46,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
               
                // Lottie Animation
               Container(
-                width: 200,
-                height: 200,
+                width: 300,
+                height: 270,
                 child: Lottie.asset(
                   'assets/animations/share with friends.json',
                   fit: BoxFit.contain,
@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: 20),
 
               // Title Text
               const Text(
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: 20),
 
               // Email TextField
               Container(
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              SizedBox(height: 12),
+              SizedBox(height: 10),
 
               // Forgot Password
               Align(
@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              SizedBox(height: 10),
+              SizedBox(height: 0),
 
               // Sign In Button
               Container(
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               
 
-              SizedBox(height: 30),
+              SizedBox(height: 20),
 
               // Or continue with
               Text(
@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              SizedBox(height: 10),
 
               // Social Login Buttons
               Row(
@@ -270,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
 
-              SizedBox(height: 10),
+              SizedBox(height: 5),
 
               // Register Link
               Row(
@@ -299,7 +299,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
 
-              SizedBox(height: 20),
+              SizedBox(height: 10),
             ],
           ),
         ),
