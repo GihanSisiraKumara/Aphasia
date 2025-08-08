@@ -13,6 +13,7 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
   bool _obscurePassword = true;
   @override
  Widget build(BuildContext context) {
@@ -88,6 +89,36 @@ class _SignupState extends State<Signup> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
+                    hintText: 'Email',
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 16,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(20),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 10),
+
+              // Username TextField
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _usernameController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
                     hintText: 'Username',
                     hintStyle: TextStyle(
                       color: Colors.grey[400],
@@ -99,7 +130,7 @@ class _SignupState extends State<Signup> {
                 ),
               ),
 
-              SizedBox(height: 16),
+              SizedBox(height: 10),
 
               // Password TextField
               Container(
@@ -142,7 +173,7 @@ class _SignupState extends State<Signup> {
                 ),
               ),
 
-              SizedBox(height: 10),
+              SizedBox(height: 5),
 
               // Forgot Password
               Align(
@@ -187,7 +218,7 @@ class _SignupState extends State<Signup> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              SizedBox(height: 10),
 
               // Or continue with
               Text(
