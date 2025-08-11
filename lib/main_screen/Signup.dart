@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
- // Make sure to replace with the correct path to your LoginPage file
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -29,10 +28,12 @@ class _SignupState extends State<Signup> {
   bool _isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
+
   // Password validation (minimum 6 characters)
   bool _isValidPassword(String password) {
     return password.length >= 6;
   }
+
   // Username validation (minimum 3 characters, no spaces)
   bool _isValidUsername(String username) {
     return username.length >= 3 && !username.contains(' ');
@@ -47,12 +48,15 @@ class _SignupState extends State<Signup> {
           .get();
       return querySnapshot.docs.isEmpty;
     } catch (e) {
+      print('Error checking username availability: $e');
       return false;
     }
   }
 
   // Show alert dialog
   void _showAlert(String title, String message, {bool isSuccess = false}) {
+    if (!mounted) return; // Check if widget is still mounted
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -63,7 +67,7 @@ class _SignupState extends State<Signup> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                if (isSuccess) {
+                if (isSuccess && mounted) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -106,6 +110,8 @@ class _SignupState extends State<Signup> {
       return;
     }
 
+    if (!mounted) return; // Check if widget is still mounted
+
     setState(() {
       _isLoading = true;
     });
@@ -114,13 +120,17 @@ class _SignupState extends State<Signup> {
       // Check if username is available
       bool usernameAvailable = await _isUsernameAvailable(username);
       if (!usernameAvailable) {
-        _showAlert('Username Taken',
-            'This username is already taken. Please choose another one.');
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted) {
+          _showAlert('Username Taken',
+              'This username is already taken. Please choose another one.');
+          setState(() {
+            _isLoading = false;
+          });
+        }
         return;
       }
+
+      print('Creating user with email: $email'); // Debug log
 
       // Create user with Firebase Auth
       UserCredential userCredential =
@@ -129,94 +139,130 @@ class _SignupState extends State<Signup> {
         password: password,
       );
 
-      // Update display name
-      await userCredential.user!.updateDisplayName(username);
+      print(
+          'User created successfully: ${userCredential.user?.uid}'); // Debug log
 
-      // Save user data to Firestore
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'username': username.toLowerCase(),
-        'displayName': username,
-        'email': email.toLowerCase(),
-        'createdAt': FieldValue.serverTimestamp(),
-        'isActive': true,
-      });
+      // Verify user creation was successful
+      if (userCredential.user != null) {
+        // Update display name
+        await userCredential.user!.updateDisplayName(username);
+        print('Display name updated to: $username'); // Debug log
 
-      setState(() {
-        _isLoading = false;
-      });
+        // Save user data to Firestore
+        try {
+          await _firestore
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set({
+            'uid': userCredential.user!.uid,
+            'username': username.toLowerCase(),
+            'displayName': username,
+            'email': email.toLowerCase(),
+            'createdAt': FieldValue.serverTimestamp(),
+            'isActive': true,
+          });
 
-      // Show success message and navigate to login
-      _showAlert(
-        'Success',
-        'Account created successfully! Please sign in with your credentials.',
-        isSuccess: true,
-      );
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+          print('User data saved to Firestore successfully'); // Debug log
+        } catch (firestoreError) {
+          print('Firestore error: $firestoreError'); // Debug log
+          // Even if Firestore fails, we don't want to delete the user account
+          // Just show a warning but continue with success flow
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+            _showAlert(
+              'Warning',
+              'Account created successfully, but there was an issue saving additional user data. You can still sign in with your credentials.',
+              isSuccess: true,
+            );
+          }
+          return;
+        }
 
-      String errorMessage;
-      switch (e.code) {
-        case 'weak-password':
-          errorMessage = 'The password provided is too weak.';
-          break;
-        case 'email-already-in-use':
-          errorMessage = 'An account already exists with this email.';
-          break;
-        case 'invalid-email':
-          errorMessage = 'The email address is not valid.';
-          break;
-        case 'operation-not-allowed':
-          errorMessage = 'Email/password accounts are not enabled.';
-          break;
-        default:
-          errorMessage = 'Registration failed: ${e.message}';
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          // Show success message and navigate to login
+          _showAlert(
+            'Success',
+            'Account created successfully! Please sign in with your credentials.',
+            isSuccess: true,
+          );
+        }
+      } else {
+        throw Exception('User creation failed - userCredential.user is null');
       }
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.code} - ${e.message}'); // Debug log
 
-      _showAlert('Registration Failed', errorMessage);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        String errorMessage;
+        switch (e.code) {
+          case 'weak-password':
+            errorMessage = 'The password provided is too weak.';
+            break;
+          case 'email-already-in-use':
+            errorMessage = 'An account already exists with this email.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'The email address is not valid.';
+            break;
+          case 'operation-not-allowed':
+            errorMessage = 'Email/password accounts are not enabled.';
+            break;
+          case 'network-request-failed':
+            errorMessage =
+                'Network error. Please check your connection and try again.';
+            break;
+          default:
+            errorMessage = 'Registration failed: ${e.message}';
+        }
+
+        _showAlert('Registration Failed', errorMessage);
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      print('Unexpected error details: $e'); // Enhanced debug log
+      print('Error type: ${e.runtimeType}'); // Debug log
 
-      _showAlert('Error', 'An unexpected error occurred. Please try again.');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        // More specific error message
+        String errorMessage = 'An unexpected error occurred: ${e.toString()}';
+        if (e.toString().contains('permission')) {
+          errorMessage =
+              'Permission denied. Please check your Firestore security rules.';
+        } else if (e.toString().contains('network')) {
+          errorMessage =
+              'Network error. Please check your internet connection.';
+        }
+
+        _showAlert('Error', errorMessage);
+      }
     }
   }
 
-
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(232, 245, 232, 1),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   leading: Icon(Icons.close, color: Colors.black54),
-      //   actions: [
-      //     // TextButton(
-      //     //   onPressed: () {},
-      //     //   child: const Text(
-      //     //     'Skip',
-      //     //     style: TextStyle(
-      //     //       color: Colors.black54,
-      //     //       fontSize: 16,
-      //     //     ),
-      //     //   ),
-      //     // ),
-      //   ],
-      // ),
+      backgroundColor: const Color.fromRGBO(232, 245, 232, 1),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // SizedBox(height: 20),
-            
                 // Lottie Animation
                 Container(
                   width: 300,
@@ -228,9 +274,9 @@ class _SignupState extends State<Signup> {
                     animate: true,
                   ),
                 ),
-            
-                SizedBox(height: 20),
-            
+
+                const SizedBox(height: 20),
+
                 // Title Text
                 const Text(
                   'Welcome you\'ve been missed!',
@@ -242,9 +288,9 @@ class _SignupState extends State<Signup> {
                     height: 1.3,
                   ),
                 ),
-            
-                SizedBox(height: 20),
-            
+
+                const SizedBox(height: 20),
+
                 // Email TextField
                 Container(
                   decoration: BoxDecoration(
@@ -254,7 +300,7 @@ class _SignupState extends State<Signup> {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
                         blurRadius: 10,
-                        offset: Offset(0, 2),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
@@ -277,13 +323,13 @@ class _SignupState extends State<Signup> {
                         fontSize: 16,
                       ),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(20),
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 10),
-            
+
+                const SizedBox(height: 10),
+
                 // Username TextField
                 Container(
                   decoration: BoxDecoration(
@@ -293,13 +339,12 @@ class _SignupState extends State<Signup> {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
                         blurRadius: 10,
-                        offset: Offset(0, 2),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
                   child: TextFormField(
                     controller: _usernameController,
-                    // keyboardType: TextInputType.username,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a username';
@@ -316,13 +361,13 @@ class _SignupState extends State<Signup> {
                         fontSize: 16,
                       ),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(20),
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 10),
-            
+
+                const SizedBox(height: 10),
+
                 // Password TextField
                 Container(
                   decoration: BoxDecoration(
@@ -332,7 +377,7 @@ class _SignupState extends State<Signup> {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
                         blurRadius: 10,
-                        offset: Offset(0, 2),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
@@ -355,7 +400,7 @@ class _SignupState extends State<Signup> {
                         fontSize: 16,
                       ),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(20),
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
@@ -372,10 +417,10 @@ class _SignupState extends State<Signup> {
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 5),
-            
-                // Forgot Password
+
+                const SizedBox(height: 5),
+
+                // Ready to Sign Up text
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -389,24 +434,24 @@ class _SignupState extends State<Signup> {
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 0),
-            
-                // Sign In Button
+
+                const SizedBox(height: 0),
+
+                // Sign Up Button
                 Container(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _signUp,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 109, 240, 168),
+                      backgroundColor: const Color.fromARGB(255, 109, 240, 168),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
-                    child : _isLoading 
-                        ? SizedBox(
+                    child: _isLoading
+                        ? const SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(
@@ -414,19 +459,19 @@ class _SignupState extends State<Signup> {
                               strokeWidth: 2,
                             ),
                           )
-                    : const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                        : const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
-            
-                SizedBox(height: 10),
-            
+
+                const SizedBox(height: 10),
+
                 // Or continue with
                 Text(
                   'Or continue with',
@@ -435,9 +480,9 @@ class _SignupState extends State<Signup> {
                     fontSize: 14,
                   ),
                 ),
-            
-                SizedBox(height: 10),
-            
+
+                const SizedBox(height: 10),
+
                 // Social Login Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -453,7 +498,7 @@ class _SignupState extends State<Signup> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -474,9 +519,9 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
-            
-                    SizedBox(width: 20),
-            
+
+                    const SizedBox(width: 20),
+
                     // Apple Button
                     Container(
                       width: 60,
@@ -488,7 +533,7 @@ class _SignupState extends State<Signup> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -505,15 +550,15 @@ class _SignupState extends State<Signup> {
                     ),
                   ],
                 ),
-            
-                SizedBox(height: 5),
-            
+
+                const SizedBox(height: 5),
+
                 // Register Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Allready an account? ',
+                      'Already have an account? ',
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 14,
@@ -521,9 +566,7 @@ class _SignupState extends State<Signup> {
                     ),
                     TextButton(
                       onPressed: () {
-                        // Handle register
                         Navigator.pushReplacement(
-                          // Changed from Navigator.push
                           context,
                           MaterialPageRoute(
                               builder: (context) => const LoginPage()),
@@ -540,8 +583,8 @@ class _SignupState extends State<Signup> {
                     ),
                   ],
                 ),
-            
-                SizedBox(height: 10),
+
+                const SizedBox(height: 10),
               ],
             ),
           ),
