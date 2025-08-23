@@ -8,6 +8,10 @@ import 'Screens/TreatmentTwoPage.dart'; // Import the file where TreatmentTwoPag
 import 'Screens/TreatmentThreePage.dart'; // Import the file where TreatmentThreePage is defined
 import 'Screens/TreatmentFourPage.dart'; // Import the file where TreatmentFourPage is defined
 import 'Screens/TreatmentFivePage.dart'; // Import the file where TreatmentFivePage is defined
+import 'Screens/TreatmentSixPage.dart'; // Import the file where TreatmentSixPage is defined
+import 'Screens/TreatmentSevenPage.dart'; // Import the file where TreatmentSevenPage is defined
+import 'Screens/TreatmentEightPage.dart'; // Import the file where TreatmentEightPage is defined
+import 'Screens/TreatmentZerowPage.dart'; // Import the file where TreatmentZerowPage is defined
 
 
 void main() async {
@@ -30,11 +34,15 @@ class MyApp extends StatelessWidget {
         home: const WelcomeScreen(),
         routes: {'/login': (context) => const LoginPage(),
           '/welcome': (context) => const WelcomeScreen(),
+          '/treatmentZero': (context) => const TreatmentZerowPage(),
           '/treatmentOne': (context) => const TreatmentOnePage(),
           '/treatmentTwo': (context) => const TreatmentTwoPage(),
           '/treatmentThree': (context) => const TreatmentThreePage(),
           '/treatmentFour': (context) => const TreatmentFourPage(),
           '/treatmentFive': (context) => const TreatmentFivePage(),
+          '/treatmentSix': (context) => const TreatmentSixPage(),
+          '/treatmentSeven': (context) => const TreatmentSevenPage(),
+          '/treatmentEight': (context) => const TreatmentEightPage(),
         },
 
         );

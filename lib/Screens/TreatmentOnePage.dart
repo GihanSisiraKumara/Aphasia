@@ -8,7 +8,7 @@ class TreatmentOnePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Treatment One")),
       body: const Center(
-        child: Text("This is  Treatment One Page"),
+        child: Text("This is  Treatment xerow Page"),
       ),
     );
   }

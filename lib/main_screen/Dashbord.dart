@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finalproject/Screens/TreatmentOnePage.dart';
-import 'package:finalproject/Screens/TreatmentTwoPage.dart';
-import 'package:finalproject/Screens/TreatmentThreePage.dart';
-import 'package:finalproject/Screens/TreatmentFourPage.dart';
-import 'package:finalproject/Screens/TreatmentFivePage.dart';
-
 
 class Dashbord extends StatefulWidget {
   const Dashbord({super.key});
@@ -91,14 +85,14 @@ class _DashbordState extends State<Dashbord> {
       );
     }
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      backgroundColor: const Color.fromRGBO(232, 245, 232, 1),
+      // body: SafeArea(
+        body: SingleChildScrollView(
           child: Column(
             children: [
               // Top Header Section
               Container(
-                height: 380,
+                height: 400,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
@@ -125,6 +119,13 @@ class _DashbordState extends State<Dashbord> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                               const Text(
+                                'Welcome',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 24,
+                                ),
+                              ),
                               Text(
                                 username.isNotEmpty
                                     ? username.substring(0, 1).toUpperCase() +
@@ -136,13 +137,7 @@ class _DashbordState extends State<Dashbord> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const Text(
-                                'Good Afternoondd',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 16,
-                                ),
-                              ),
+                             
                             ],
                           ),
                           GestureDetector(
@@ -331,7 +326,7 @@ class _DashbordState extends State<Dashbord> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Change user profiled',
+                      'Let\'s Begin Your Treatment',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -339,7 +334,7 @@ class _DashbordState extends State<Dashbord> {
                       ),
                     ),
                     const Text(
-                      'Change user profile for sync in 5 minutesnnh!',
+                      'Follow the instructions to get started!',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -355,18 +350,26 @@ class _DashbordState extends State<Dashbord> {
                       crossAxisCount: 3,
                       mainAxisSpacing: 15,
                       crossAxisSpacing: 15,
-                      childAspectRatio: 0.85,
+                      childAspectRatio: 1.0,
                       children: [
-                        _buildProfileCard("One", "treatment one", Icons.healing,
+                        _buildProfileCard("0", "Level 0",
+                            '/treatmentZero'),
+                        _buildProfileCard("1", "Level 1",
                             '/treatmentOne'),
-                        _buildProfileCard("Two", "treatment two",
-                            Icons.local_hospital, '/treatmentTwo'),
-                        _buildProfileCard("Profile", "\$0.00", Icons.person,
+                        _buildProfileCard("2", "Level 2",
+                            '/treatmentTwo'),
+                        _buildProfileCard("3", "Level 3",
                             '/treatmentThree'),
-                        _buildProfileCard("Sean", "\$340.00", Icons.person,
+                        _buildProfileCard("4", "Level 4",
                             '/treatmentFour'),
-                        _buildProfileCard("Martinez", "\$340.00", Icons.person,
+                        _buildProfileCard("5", "Level 5",
                             '/treatmentFive'),
+                        _buildProfileCard("6", "Level 6",
+                            '/treatmentSix'),
+                        _buildProfileCard("7", "Level 7",
+                            '/treatmentSeven'),
+                        _buildProfileCard("8", "Level 8",
+                            '/treatmentEight'),
                       ],
                     ),
                   ],
@@ -377,7 +380,7 @@ class _DashbordState extends State<Dashbord> {
             ],
           ),
         ),
-      ),
+      
 
       // Bottom Navigation
       bottomNavigationBar: Container(
@@ -400,9 +403,9 @@ class _DashbordState extends State<Dashbord> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildNavItem(Icons.home, 'Dashboard', true),
-            _buildNavItem(Icons.attach_money, 'Funds', false),
+            _buildNavItem(Icons.language, 'AI chat', false),
             _buildNavItem(Icons.credit_card, 'Send', false),
-            _buildNavItem(Icons.schedule, 'Tracking', false),
+            _buildNavItem(Icons.track_changes, 'Tracking', false),
             _buildNavItem(Icons.person, 'Profile', false),
           ],
         ),
@@ -411,8 +414,7 @@ class _DashbordState extends State<Dashbord> {
   }
 
   // In Dashbord.dart
-  Widget _buildProfileCard(
-      String title, String subtitle, IconData icon, String routeName) {
+  Widget _buildProfileCard(String number, String subtitle, String routeName) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, routeName);
@@ -421,20 +423,29 @@ class _DashbordState extends State<Dashbord> {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
+          padding: const EdgeInsets.all(12.0), // Reduced padding
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: TextStyle(color: Colors.grey[600])),
-                ],
+              // Large number display
+              Text(
+                number,
+                style: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(221, 186, 183, 183),
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Subtitle below the number
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Color.fromARGB(255, 30, 29, 29),
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
