@@ -1,10 +1,18 @@
+import 'package:finalproject/main_screen/LoginPage%20.dart';
 import 'package:flutter/material.dart';
 import 'main_screen/WelcomeScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'Screens/TreatmentOnePage.dart'; // Import the file where TreatmentOnePage is defined
+import 'Screens/TreatmentTwoPage.dart'; // Import the file where TreatmentTwoPage is defined
+import 'Screens/TreatmentThreePage.dart'; // Import the file where TreatmentThreePage is defined
+import 'Screens/TreatmentFourPage.dart'; // Import the file where TreatmentFourPage is defined
+import 'Screens/TreatmentFivePage.dart'; // Import the file where TreatmentFivePage is defined
+
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required before calling Firebase.initializeApp
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Required before calling Firebase.initializeApp
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -17,11 +25,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
-      
-    );
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const WelcomeScreen(),
+        routes: {'/login': (context) => const LoginPage(),
+          '/welcome': (context) => const WelcomeScreen(),
+          '/treatmentOne': (context) => const TreatmentOnePage(),
+          '/treatmentTwo': (context) => const TreatmentTwoPage(),
+          '/treatmentThree': (context) => const TreatmentThreePage(),
+          '/treatmentFour': (context) => const TreatmentFourPage(),
+          '/treatmentFive': (context) => const TreatmentFivePage(),
+        },
+
+        );
   }
 }
-

@@ -1,5 +1,6 @@
+import 'package:finalproject/main_screen/Dashbord.dart';
 import 'package:finalproject/main_screen/Signup.dart';
-import 'package:finalproject/main_screen/TestScreen.dart';
+// import 'package:finalproject/main_screen/TestScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -124,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => Testscreen(),
+          builder: (context) => Dashbord(),
         ),
       );
     } on FirebaseAuthException catch (e) {
