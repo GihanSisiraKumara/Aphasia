@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-class Levelzerothirdpage extends StatelessWidget {
+class Levelzerothirdpage extends StatefulWidget {
   const Levelzerothirdpage({super.key});
 
+  @override
+  State<Levelzerothirdpage> createState() => _LevelzerothirdpageState();
+}
+
+class _LevelzerothirdpageState extends State<Levelzerothirdpage> {
+  bool isPlaying = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,8 +47,74 @@ class Levelzerothirdpage extends StatelessWidget {
           ),
         ),
       ),
-      body: const Center(
-        child: Text("This is Levelzerothirdpage"),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Circular image/GIF container
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color.fromARGB(255, 33, 180, 82),
+                  width: 4,
+                ),
+              ),
+              child: ClipOval(
+                child: isPlaying
+                    ? Image.asset(
+                        'assets/jif/circular_motion.png',
+                        fit: BoxFit.cover,
+                        width: 200,
+                        height: 200,
+                      )
+                    : Image.asset(
+                        'assets/jif/circular_motion.png',
+                        fit: BoxFit.cover,
+                        width: 200,
+                        height: 200,
+                        // This shows the first frame when not playing
+                        gaplessPlayback: true,
+                      ),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // Play button
+            Container(
+              child: const Text(
+                'Third Step Instructions',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(137, 17, 17, 17),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Instruction text
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 224, 222, 222),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                ' Rotate the tongue along the lips in a circular motion. Do this for 5 times in the clockwise and 5 in anticlockwise.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -39,6 +39,7 @@ dependencies:
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
   cloud_firestore: ^5.4.4
+  gif: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -69,7 +70,9 @@ flutter:
     - assets/animations/share with friends.json
     - assets/animations/Appointment booking with smartphone.json
     - assets/images/treatmentimg.png
-    
+    - assets/jif/air_fill.gif
+    - assets/jif/tongue_pressuring.png
+    - assets/jif/circular_motion.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

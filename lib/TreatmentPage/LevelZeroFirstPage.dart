@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
-class Levelzerofirstpage extends StatelessWidget {
+class Levelzerofirstpage extends StatefulWidget {
   const Levelzerofirstpage({super.key});
+
+  @override
+  State<Levelzerofirstpage> createState() => _LevelzerofirstpageState();
+}
+
+class _LevelzerofirstpageState extends State<Levelzerofirstpage> {
+  bool isPlaying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +48,75 @@ class Levelzerofirstpage extends StatelessWidget {
           ),
         ),
       ),
-      body: const Center(
-        child: Text("This is Levelzerofirstpage"),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Circular image/GIF container
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color.fromARGB(255, 33, 180, 82),
+                  width: 4,
+                ),
+              ),
+              child: ClipOval(
+                child: isPlaying
+                    ? Image.asset(
+                        'assets/jif/air_fill.gif',
+                        fit: BoxFit.cover,
+                        width: 200,
+                        height: 200,
+                      )
+                    : Image.asset(
+                        'assets/jif/air_fill.gif',
+                        fit: BoxFit.cover,
+                        width: 200,
+                        height: 200,
+                        // This shows the first frame when not playing
+                        gaplessPlayback: true,
+                      ),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // Play button
+            Container(
+              
+              child: const Text(
+                'First Step Instructions',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(137, 17, 17, 17),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Instruction text
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 224, 222, 222),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Fill the mouth with air  and release the air. Do this for 10 times.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

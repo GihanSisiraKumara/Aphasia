@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-class Levelzeroeighthpage extends StatelessWidget {
-  const Levelzeroeighthpage({super.key});
+class Levelzeroeightthpage extends StatefulWidget {
+  const Levelzeroeightthpage({super.key});
 
+  @override
+  State<Levelzeroeightthpage> createState() => _LevelzeroeightthpageState();
+}
+
+class _LevelzeroeightthpageState extends State<Levelzeroeightthpage> {
+  bool isPlaying = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +17,7 @@ class Levelzeroeighthpage extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 252, 250, 251),
         centerTitle: true,
         title: const Text(
-          'Eigth Step',
+          'Eighth Step',
           style: TextStyle(
               fontSize: 22,
               color: Color.fromARGB(255, 244, 242, 242),
@@ -41,8 +47,74 @@ class Levelzeroeighthpage extends StatelessWidget {
           ),
         ),
       ),
-      body: const Center(
-        child: Text("This is Levelzeroeighthpage"),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Circular image/GIF container
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color.fromARGB(255, 33, 180, 82),
+                  width: 4,
+                ),
+              ),
+              child: ClipOval(
+                child: isPlaying
+                    ? Image.asset(
+                        'assets/jif/tongue_pressuring.png',
+                        fit: BoxFit.cover,
+                        width: 200,
+                        height: 200,
+                      )
+                    : Image.asset(
+                        'assets/jif/tongue_pressuring.png',
+                        fit: BoxFit.cover,
+                        width: 200,
+                        height: 200,
+                        // This shows the first frame when not playing
+                        gaplessPlayback: true,
+                      ),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // Play button
+            Container(
+              child: const Text(
+                'Eighth Step Instructions',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(137, 17, 17, 17),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Instruction text
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 224, 222, 222),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Get the tongue out of the mouth and stretch out in up, down. left and right directions.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

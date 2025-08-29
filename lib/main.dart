@@ -56,9 +56,9 @@ class MyApp extends StatelessWidget {
           '/levelZeroThird': (context) => const Levelzerothirdpage(),
           '/levelZeroFourth': (context) => const Levelzeroforthpage(),
           '/levelZeroFifth': (context) => const Levelzerofifthpage(),
-          '/levelZeroSixth': (context) => const Levelzerosixthpage(),
+          '/levelZeroSixth': (context) => const Levelzerosixpage(),
           '/levelZeroSeventh': (context) => const Levelzeroseventhpage(),
-          '/levelZeroEighth': (context) => const Levelzeroeighthpage(),
+          '/levelZeroEighth': (context) => const Levelzeroeightthpage(),
         },
 
         );
