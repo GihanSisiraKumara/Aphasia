@@ -1,3 +1,11 @@
+import 'package:finalproject/TreatmentPage/LevelZeroFirstPage.dart';
+import 'package:finalproject/TreatmentPage/LevelZeroSecondPage.dart';
+import 'package:finalproject/TreatmentPage/LevelzeroEightthpage.dart';
+import 'package:finalproject/TreatmentPage/LevelzeroFifthpage.dart';
+import 'package:finalproject/TreatmentPage/LevelzeroForthpage.dart';
+import 'package:finalproject/TreatmentPage/LevelzeroSeventhpage.dart';
+import 'package:finalproject/TreatmentPage/LevelzeroSixpage.dart';
+import 'package:finalproject/TreatmentPage/LevelzeroThirdpage.dart';
 import 'package:finalproject/main_screen/LoginPage%20.dart';
 import 'package:flutter/material.dart';
 import 'main_screen/WelcomeScreen.dart';
@@ -43,6 +51,14 @@ class MyApp extends StatelessWidget {
           '/treatmentSix': (context) => const TreatmentSixPage(),
           '/treatmentSeven': (context) => const TreatmentSevenPage(),
           '/treatmentEight': (context) => const TreatmentEightPage(),
+          '/levelZeroFirst': (context) => const Levelzerofirstpage(),
+          '/levelZeroSecond': (context) => const Levelzerosecondpage(),
+          '/levelZeroThird': (context) => const Levelzerothirdpage(),
+          '/levelZeroFourth': (context) => const Levelzeroforthpage(),
+          '/levelZeroFifth': (context) => const Levelzerofifthpage(),
+          '/levelZeroSixth': (context) => const Levelzerosixthpage(),
+          '/levelZeroSeventh': (context) => const Levelzeroseventhpage(),
+          '/levelZeroEighth': (context) => const Levelzeroeighthpage(),
         },
 
         );
