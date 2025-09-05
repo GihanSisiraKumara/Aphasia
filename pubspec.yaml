@@ -80,6 +80,27 @@ flutter:
     - assets/voice/i.mp3
     - assets/voice/o.mp3
     - assets/voice/u.mp3
+    - assets/voice/b.mp3
+    - assets/voice/c.mp3
+    - assets/voice/d.mp3
+    - assets/voice/f.mp3
+    - assets/voice/g.mp3
+    - assets/voice/h.mp3
+    - assets/voice/j.mp3
+    - assets/voice/k.mp3
+    - assets/voice/l.mp3
+    - assets/voice/m.mp3
+    - assets/voice/n.mp3
+    - assets/voice/p.mp3
+    - assets/voice/q.mp3
+    - assets/voice/r.mp3
+    - assets/voice/s.mp3
+    - assets/voice/t.mp3
+    - assets/voice/v.mp3
+    - assets/voice/w.mp3
+    - assets/voice/x.mp3
+    - assets/voice/y.mp3
+    - assets/voice/z.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
