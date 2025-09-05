@@ -72,6 +72,11 @@ flutter:
     - assets/animations/share with friends.json
     - assets/animations/Appointment booking with smartphone.json
     - assets/images/treatmentimg.png
+    - assets/images/dog.png
+    - assets/images/chicken.png
+    - assets/images/bird.png
+    - assets/images/sheep.png
+    - assets/images/goat.png
     - assets/jif/air_fill.gif
     - assets/jif/tongue_pressuring.png
     - assets/jif/circular_motion.png
@@ -101,6 +106,12 @@ flutter:
     - assets/voice/x.mp3
     - assets/voice/y.mp3
     - assets/voice/z.mp3
+    - assets/voice/dog.mp3
+    - assets/voice/chicken.mp3
+    - assets/voice/bird.mp3
+    - assets/voice/sheep.mp3
+    - assets/voice/goat.mp3
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
