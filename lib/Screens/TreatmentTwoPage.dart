@@ -125,7 +125,7 @@ class _TreatmentTwoPageState extends State<TreatmentTwoPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
-                  'Do the sound for 10 rounds with the sound repeated 3 times in each round.',
+                  'Do the sound for 10 rounds with the sound repeated 3 times in each rounds.',
                   style: TextStyle(
                     fontSize: 14,
                     color: Color(0xFF666666),
@@ -177,7 +177,7 @@ class _TreatmentTwoPageState extends State<TreatmentTwoPage> {
                 ),
               ),
 
-              // Upload voice section
+             
               
             ],
           ),
