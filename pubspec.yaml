@@ -43,6 +43,7 @@ dependencies:
   audioplayers: ^5.2.1
   path_provider: ^2.1.3
   scroll_snap_list: ^0.9.1
+  
 
 dev_dependencies:
   flutter_test:
@@ -112,6 +113,7 @@ flutter:
     - assets/voice/bird.mp3
     - assets/voice/sheep.mp3
     - assets/voice/goat.mp3
+    - assets/musick/Shape_of_You.mp3
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
