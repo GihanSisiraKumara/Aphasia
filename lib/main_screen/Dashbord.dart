@@ -71,6 +71,11 @@ class _DashbordState extends State<Dashbord> {
       print('Error signing out: $e');
     }
   }
+
+  // Navigation function for bottom navigation bar
+  void _navigateToPage(String routeName) {
+    Navigator.pushNamed(context, routeName);
+  }
   
 
   
@@ -402,11 +407,12 @@ class _DashbordState extends State<Dashbord> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(Icons.home, 'Dashboard', true),
-            _buildNavItem(Icons.language, 'AI chat', false),
-            _buildNavItem(Icons.credit_card, 'Send', false),
-            _buildNavItem(Icons.track_changes, 'Tracking', false),
-            _buildNavItem(Icons.person, 'Profile', false),
+            _buildNavItem(Icons.home, 'Dashboard', true,
+                null), // Dashboard is current page
+            _buildNavItem(Icons.language, 'AI chat', false, '/aiChat'),
+            _buildNavItem(Icons.credit_card, 'Send', false, '/send'),
+            _buildNavItem(Icons.track_changes, 'Tracking', false, '/tracking'),
+            _buildNavItem(Icons.person, 'Profile', false, '/profile'),
           ],
         ),
       ),
@@ -455,27 +461,36 @@ class _DashbordState extends State<Dashbord> {
   }
 
 
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          color: isActive ? const Color(0xFF6366F1) : Colors.grey,
-          size: 24,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
+  Widget _buildNavItem(
+      IconData icon, String label, bool isActive, String? routeName) {
+    return GestureDetector(
+      onTap: () {
+        if (routeName != null) {
+          _navigateToPage(routeName);
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
             color: isActive ? const Color(0xFF6366F1) : Colors.grey,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+            size: 24,
           ),
-        ),
-      ],
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isActive ? const Color(0xFF6366F1) : Colors.grey,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
     );
   }
+
 
   void _showProfileOptions() {
     showModalBottomSheet(

@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 
-class FundsPage extends StatefulWidget {
-  const FundsPage({super.key});
+class AiPage extends StatefulWidget {
+  const AiPage({super.key});
 
   @override
-  State<FundsPage> createState() => _FundsPageState();
+  State<AiPage> createState() => _AiPageState();
 }
 
-class _FundsPageState extends State<FundsPage> {
+class _AiPageState extends State<AiPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Funds'),
+        title: const Text('AI Page'),
         backgroundColor: const Color(0xFF6366F1),
         foregroundColor: Colors.white,
       ),
       body: const Center(
         child: Text(
-          'Funds Page',
+          'AI Page',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),

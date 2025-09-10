@@ -1,3 +1,7 @@
+import 'package:finalproject/DashbordMenu/AiPage.dart';
+import 'package:finalproject/DashbordMenu/ProfilePage.dart';
+import 'package:finalproject/DashbordMenu/SendPage.dart';
+import 'package:finalproject/DashbordMenu/TrackingPage.dart';
 import 'package:finalproject/TreatmentPage/LevelZeroFirstPage.dart';
 import 'package:finalproject/TreatmentPage/LevelZeroSecondPage.dart';
 import 'package:finalproject/TreatmentPage/LevelzeroEightthpage.dart';
@@ -59,6 +63,10 @@ class MyApp extends StatelessWidget {
           '/levelZeroSixth': (context) => const Levelzerosixpage(),
           '/levelZeroSeventh': (context) => const Levelzeroseventhpage(),
           '/levelZeroEighth': (context) => const Levelzeroeightthpage(),
+          '/aiChat': (context) => const AiPage(),
+        '/send': (context) => const SendPage(),
+        '/tracking': (context) => const TrackingPage(),
+        '/profile': (context) => const ProfilePage(),
         },
 
         );
