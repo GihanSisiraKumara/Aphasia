@@ -437,7 +437,7 @@ class _DashbordState extends State<Dashbord> {
               Text(
                 number,
                 style: const TextStyle(
-                  fontSize: 36,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(221, 186, 183, 183),
                 ),
