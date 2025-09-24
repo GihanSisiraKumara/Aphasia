@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ikchatbot/ikchatbot.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:ikchatbot/ikchatbot.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AiPage extends StatefulWidget {
   const AiPage({super.key});
@@ -28,7 +28,7 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
   bool _speechEnabled = false;
   String _wordsSpoken = "";
   double _confidenceLevel = 0;
-  List<Map<String, String>> _voiceConversation = [];
+  final List<Map<String, String>> _voiceConversation = [];
   bool _isSpeaking = false;
 
   @override
@@ -142,7 +142,7 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
         vsync: this,
       );
 
-      _pulseAnimation = AlwaysStoppedAnimation(1.0);
+      _pulseAnimation = const AlwaysStoppedAnimation(1.0);
     }
   }
 
@@ -443,9 +443,32 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isVoiceMode ? 'Voice AI Assistant' : 'AI Chat Assistant'),
-        backgroundColor: const Color(0xFF6366F1),
+        backgroundColor: const Color.fromARGB(255, 254, 254, 255),
         foregroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          style: ButtonStyle(
+            iconSize: WidgetStateProperty.all<double>(30),
+            iconColor: WidgetStateProperty.all<Color>(
+                const Color.fromARGB(255, 252, 251, 251)),
+            backgroundColor: WidgetStateProperty.all<Color>(
+                const Color.fromARGB(255, 64, 183, 37)),
+          ),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 199, 238, 148),
+                Color.fromARGB(255, 33, 180, 82)
+              ],
+            ),
+          ),
+        ),
         actions: [
           if (_isVoiceMode && _voiceConversation.isNotEmpty)
             IconButton(
@@ -478,14 +501,17 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
 
   Widget _buildVoiceChatInterface() {
     // FIX: Added null check for pulse animation
-    final pulseAnimation = _pulseAnimation ?? AlwaysStoppedAnimation(1.0);
+    final pulseAnimation = _pulseAnimation ?? const AlwaysStoppedAnimation(1.0);
 
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color.fromARGB(255, 199, 238, 148),
+            Color.fromARGB(255, 33, 180, 82)
+          ],
         ),
       ),
       child: Column(
@@ -598,12 +624,12 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: const Color.fromARGB(255, 254, 251, 251).withOpacity(0.2),
                       borderRadius: BorderRadius.circular(25),
                     ),
                     child: Text(
                       _isListening
-                          ? 'Listening... "${_wordsSpoken}"'
+                          ? 'Listening... "$_wordsSpoken"'
                           : _isSpeaking
                               ? 'AI is speaking...'
                               : _speechEnabled
@@ -611,9 +637,9 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
                                   : 'Voice recognition not available',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color.fromARGB(255, 251, 250, 250),
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -710,7 +736,7 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
                             : 'Tap microphone to start speaking',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
-                      fontSize: 14,
+                      fontSize: 15,
                     ),
                   ),
                 ],
@@ -724,7 +750,7 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
 
   Widget _buildWelcomeScreen() {
     // FIX: Added null check for pulse animation
-    final pulseAnimation = _pulseAnimation ?? AlwaysStoppedAnimation(1.0);
+    final pulseAnimation = _pulseAnimation ?? const AlwaysStoppedAnimation(1.0);
 
     return Container(
       decoration: const BoxDecoration(
