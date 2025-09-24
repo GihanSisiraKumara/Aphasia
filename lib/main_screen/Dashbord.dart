@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class Dashbord extends StatefulWidget {
   const Dashbord({super.key});
@@ -10,7 +10,6 @@ class Dashbord extends StatefulWidget {
 }
 
 class _DashbordState extends State<Dashbord> {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -24,7 +23,6 @@ class _DashbordState extends State<Dashbord> {
     _getUserData();
   }
 
-  
   // Get user data from Firestore
   Future<void> _getUserData() async {
     try {
@@ -76,9 +74,6 @@ class _DashbordState extends State<Dashbord> {
   void _navigateToPage(String routeName) {
     Navigator.pushNamed(context, routeName);
   }
-  
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -92,300 +87,290 @@ class _DashbordState extends State<Dashbord> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(232, 245, 232, 1),
       // body: SafeArea(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Top Header Section
-              Container(
-                height: 400,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color.fromRGBO(192, 237, 192, 1),
-                      Color(0xFF8B5CF6),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
-                  ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Top Header Section
+            Container(
+              height: 400,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromARGB(255, 216, 255, 166),
+                    Color.fromARGB(255, 33, 180, 82),
+                  ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header Row with Username and Profile
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                               const Text(
-                                'Welcome',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 24,
-                                ),
-                              ),
-                              Text(
-                                username.isNotEmpty
-                                    ? username.substring(0, 1).toUpperCase() +
-                                        username.substring(1)
-                                    : 'User',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                             
-                            ],
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              // Handle profile tap
-                              _showProfileOptions();
-                            },
-                            child: const CircleAvatar(
-                              radius: 25,
-                              backgroundImage: NetworkImage(
-                                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // Balance Section
-                      Row(
-                        children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Wallet Balance',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '\$9,782.42',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Cards Active',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '3',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 20),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Text(
-                              'Edit ID',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // Card Section
-                      Row(
-                        children: [
-                          // Main Card
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 120,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '\$9,782.42',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      '•••• •••• •••• ••••',
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 16,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(width: 15),
-
-                          // Secondary Card
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 120,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.2),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '\$9,782.42',
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      '•••• •••• ••••',
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 10,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
               ),
-
-              const SizedBox(height: 30),
-
-              // Change User Profile Section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Let\'s Begin Your Treatment',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const Text(
-                      'Follow the instructions to get started!',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Profile Grid
-                    GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 15,
-                      childAspectRatio: 1.0,
+                    // Header Row with Username and Profile
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildProfileCard("0", "Level 0",
-                            '/treatmentZero'),
-                        _buildProfileCard("1", "Level 1",
-                            '/treatmentOne'),
-                        _buildProfileCard("2", "Level 2",
-                            '/treatmentTwo'),
-                        _buildProfileCard("3", "Level 3",
-                            '/treatmentThree'),
-                        _buildProfileCard("4", "Level 4",
-                            '/treatmentFour'),
-                        _buildProfileCard("5", "Level 5",
-                            '/treatmentFive'),
-                        _buildProfileCard("6", "Level 6",
-                            '/treatmentSix'),
-                        _buildProfileCard("7", "Level 7",
-                            '/treatmentSeven'),
-                        _buildProfileCard("8", "Level 8",
-                            '/treatmentEight'),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Welcome',
+                              style: TextStyle(
+                                color: Color.fromARGB(179, 18, 18, 18),
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              username.isNotEmpty
+                                  ? username.substring(0, 1).toUpperCase() +
+                                      username.substring(1)
+                                  : 'User',
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 114, 114, 114),
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Handle profile tap
+                            _showProfileOptions();
+                          },
+                          child: const CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(
+                              'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Balance Section
+                    Row(
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Wallet Balance',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              '\$9,782.42',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Cards Active',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              '3',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'Edit ID',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Card Section
+                    Row(
+                      children: [
+                        // Main Card
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '\$9,782.42',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    '•••• •••• •••• ••••',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 16,
+                                      letterSpacing: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 15),
+
+                        // Secondary Card
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '\$9,782.42',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    '•••• •••• ••••',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 10,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
+            ),
 
-              const SizedBox(height: 100), // Space for bottom navigation
-            ],
-          ),
+            const SizedBox(height: 30),
+
+            // Change User Profile Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Let\'s Begin Your Treatment',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const Text(
+                    'Follow the instructions to get started!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Profile Grid
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
+                    childAspectRatio: 1.0,
+                    children: [
+                      _buildProfileCard("0", "Level 0", '/treatmentZero'),
+                      _buildProfileCard("1", "Level 1", '/treatmentOne'),
+                      _buildProfileCard("2", "Level 2", '/treatmentTwo'),
+                      _buildProfileCard("3", "Level 3", '/treatmentThree'),
+                      _buildProfileCard("4", "Level 4", '/treatmentFour'),
+                      _buildProfileCard("5", "Level 5", '/treatmentFive'),
+                      _buildProfileCard("6", "Level 6", '/treatmentSix'),
+                      _buildProfileCard("7", "Level 7", '/treatmentSeven'),
+                      _buildProfileCard("8", "Level 8", '/treatmentEight'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 100), // Space for bottom navigation
+          ],
         ),
-      
+      ),
 
       // Bottom Navigation
       bottomNavigationBar: Container(
@@ -460,7 +445,6 @@ class _DashbordState extends State<Dashbord> {
     );
   }
 
-
   Widget _buildNavItem(
       IconData icon, String label, bool isActive, String? routeName) {
     return GestureDetector(
@@ -474,7 +458,8 @@ class _DashbordState extends State<Dashbord> {
         children: [
           Icon(
             icon,
-            color: isActive ? const Color(0xFF6366F1) : Colors.grey,
+            color:
+                isActive ? const Color.fromARGB(255, 33, 180, 82) : Colors.grey,
             size: 24,
           ),
           const SizedBox(height: 4),
@@ -482,7 +467,9 @@ class _DashbordState extends State<Dashbord> {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: isActive ? const Color(0xFF6366F1) : Colors.grey,
+              color: isActive
+                  ? const Color.fromARGB(255, 33, 180, 82)
+                  : Colors.grey,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
@@ -490,7 +477,6 @@ class _DashbordState extends State<Dashbord> {
       ),
     );
   }
-
 
   void _showProfileOptions() {
     showModalBottomSheet(
