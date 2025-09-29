@@ -1,14 +1,14 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
-import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class TrackingPage extends StatefulWidget {
   const TrackingPage({super.key});
@@ -24,6 +24,7 @@ class _TrackingPageState extends State<TrackingPage> {
   String? _recordingPath;
   String? _transcribedText;
   String? _errorMessage;
+  Map<String, dynamic>? _analysisResult;
 
   @override
   void dispose() {
@@ -33,10 +34,8 @@ class _TrackingPageState extends State<TrackingPage> {
 
   Future<bool> _requestPermissions() async {
     try {
-      // For Android 10+ (API 29+), we need to request media permissions instead of storage
       final micStatus = await Permission.microphone.status;
 
-      // Check if microphone permission is granted
       if (!micStatus.isGranted) {
         final micResult = await Permission.microphone.request();
         if (!micResult.isGranted) {
@@ -49,8 +48,6 @@ class _TrackingPageState extends State<TrackingPage> {
         }
       }
 
-      // For audio files, we don't need storage permission on newer Android versions
-      // The app can use its own temporary directory without storage permission
       return true;
     } catch (e) {
       setState(() {
@@ -62,10 +59,10 @@ class _TrackingPageState extends State<TrackingPage> {
 
   Future<void> _startRecording() async {
     try {
-      // Clear previous errors
       setState(() {
         _errorMessage = null;
         _transcribedText = null;
+        _analysisResult = null;
       });
 
       final hasPermissions = await _requestPermissions();
@@ -73,18 +70,15 @@ class _TrackingPageState extends State<TrackingPage> {
         return;
       }
 
-      // Check if recorder is already running
       if (await _audioRecorder.isRecording()) {
         await _stopRecording();
         return;
       }
 
-      // Get directory for storing the recording - uses app's temp directory
       final directory = await getTemporaryDirectory();
       final filePath =
           '${directory.path}/recording_${DateTime.now().millisecondsSinceEpoch}.aac';
 
-      // Start recording with path specified
       await _audioRecorder.start(
         const RecordConfig(
           encoder: AudioEncoder.aacLc,
@@ -164,16 +158,20 @@ class _TrackingPageState extends State<TrackingPage> {
       // Step 2: Send audio URL to your Python backend for speech-to-text
       final transcribedText = await _transcribeAudio(audioUrl);
 
-      // Step 3: Save transcribed text to Firestore
-      await _saveTranscriptionToFirestore(transcribedText, audioUrl);
+      // NEW: Step 3: Analyze the transcribed text for grammar errors
+      final analysisResult = await _analyzeText(transcribedText);
+
+      // Step 4: Save transcribed text and analysis to Firestore
+      await _saveToFirestore(transcribedText, audioUrl, analysisResult);
 
       setState(() {
         _transcribedText = transcribedText;
+        _analysisResult = analysisResult;
         _isProcessing = false;
         _errorMessage = null;
       });
 
-      _showSnackBar('Voice recording processed successfully!');
+      _showSnackBar('Voice recording processed and analyzed successfully!');
     } catch (e) {
       setState(() {
         _isProcessing = false;
@@ -182,14 +180,69 @@ class _TrackingPageState extends State<TrackingPage> {
     }
   }
 
+  // NEW: Text analysis method
+  Future<Map<String, dynamic>> _analyzeText(String text) async {
+    const String analysisUrl =
+        'https://text-analysis-backend-4.onrender.com/analyze-text';
+
+    // Add retry logic with longer timeouts
+    final timeouts = [
+      const Duration(seconds: 45),
+      const Duration(seconds: 60),
+      const Duration(seconds: 90),
+    ];
+
+    for (int attempt = 0; attempt < timeouts.length; attempt++) {
+      try {
+        print(
+            'Text analysis attempt ${attempt + 1} with timeout: ${timeouts[attempt]}');
+
+        final response = await http
+            .post(
+              Uri.parse(analysisUrl),
+              headers: {'Content-Type': 'application/json'},
+              body: json.encode({'text': text}),
+            )
+            .timeout(timeouts[attempt]);
+
+        if (response.statusCode == 200) {
+          print('Text analysis successful');
+          return json.decode(response.body);
+        } else {
+          print(
+              'Text analysis error: ${response.statusCode} - ${response.body}');
+          throw Exception(
+              'Analysis failed with status: ${response.statusCode}');
+        }
+      } on TimeoutException {
+        print(
+            'Text analysis attempt ${attempt + 1} timed out after ${timeouts[attempt]}');
+        if (attempt == timeouts.length - 1) {
+          throw TimeoutException(
+              'Text analysis timed out after ${attempt + 1} attempts');
+        }
+        // Wait before retrying
+        await Future.delayed(Duration(seconds: 5 * (attempt + 1)));
+      } catch (e) {
+        print('Text analysis attempt ${attempt + 1} failed: $e');
+        if (attempt == timeouts.length - 1) {
+          throw Exception('Text analysis error: $e');
+        }
+        // Wait before retrying
+        await Future.delayed(Duration(seconds: 5 * (attempt + 1)));
+      }
+    }
+
+    throw Exception('All text analysis attempts failed');
+  }
+
   Future<String> _transcribeAudio(String audioUrl) async {
     const String pythonBackendUrl =
         'https://voice-tracer-3.onrender.com/transcribe';
 
-    // Try multiple attempts with increasing timeouts
     final timeouts = [
-      Duration(seconds: 45),
-      Duration(seconds: 60),
+      const Duration(seconds: 45),
+      const Duration(seconds: 60),
       Duration(seconds: 90)
     ];
 
@@ -224,7 +277,6 @@ class _TrackingPageState extends State<TrackingPage> {
           throw TimeoutException(
               'Transcription request timed out after ${attempt + 1} attempts');
         }
-        // Wait before retrying
         await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
       } on http.ClientException catch (e) {
         throw Exception('Network error: ${e.message}');
@@ -238,18 +290,319 @@ class _TrackingPageState extends State<TrackingPage> {
 
   int min(int a, int b) => a < b ? a : b;
 
-  Future<void> _saveTranscriptionToFirestore(
-      String transcription, String audioUrl) async {
+  // UPDATED: Save both transcription and analysis
+  Future<void> _saveToFirestore(String transcription, String audioUrl,
+      Map<String, dynamic> analysis) async {
     try {
       await FirebaseFirestore.instance.collection('voice_transcriptions').add({
         'transcription': transcription,
         'audio_url': audioUrl,
         'timestamp': FieldValue.serverTimestamp(),
         'treatment_page': 'Treatment Eight',
+        'analysis_result': analysis,
       });
     } catch (e) {
       throw Exception('Failed to save to Firestore: ${e.toString()}');
     }
+  }
+
+  // NEW: Build Analysis Chart
+  Widget _buildAnalysisChart() {
+    if (_analysisResult == null) return Container();
+
+    final wrongWordCount = _analysisResult!['wrong_word_count'] ?? 0;
+    final totalWords = _analysisResult!['total_words'] ?? 1;
+    final correctWordCount = totalWords - wrongWordCount;
+    final confidence = (_analysisResult!['confidence'] ?? 0.0) * 100;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8F5E8),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.analytics_outlined,
+                  color: Color(0xFF4CAF50),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'Grammar Analysis',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Color(0xFF2E7D32),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Pie Chart
+          SizedBox(
+            height: 200,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: PieChart(
+                    PieChartData(
+                      sections: [
+                        PieChartSectionData(
+                          color: const Color(0xFF4CAF50),
+                          value: correctWordCount.toDouble(),
+                          title: '$correctWordCount',
+                          radius: 60,
+                          titleStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        PieChartSectionData(
+                          color: const Color(0xFFF44336),
+                          value: wrongWordCount.toDouble(),
+                          title: '$wrongWordCount',
+                          radius: 45,
+                          titleStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                      sectionsSpace: 2,
+                      centerSpaceRadius: 20,
+                      startDegreeOffset: -90,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLegendItem('Correct Words', const Color(0xFF4CAF50),
+                          correctWordCount),
+                      const SizedBox(height: 08),
+                      _buildLegendItem('Wrong Words', const Color(0xFFF44336),
+                          wrongWordCount),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE3F2FD),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              '${confidence.toStringAsFixed(1)}%',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF1976D2),
+                              ),
+                            ),
+                            const Text(
+                              'Confidence',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF1976D2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Analysis Summary
+          if (_analysisResult!['analysis_summary'] != null) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FFF8),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFE8F5E8),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                _analysisResult!['analysis_summary'],
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: Color(0xFF2E7D32),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+
+          // Corrections List
+          if (_analysisResult!['corrections'] != null &&
+              (_analysisResult!['corrections'] as List).isNotEmpty) ...[
+            const SizedBox(height: 16),
+            const Text(
+              'Corrections:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Color(0xFF2E7D32),
+              ),
+            ),
+            const SizedBox(height: 8),
+            ...(_analysisResult!['corrections'] as List).map((correction) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF8E1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: const Color(0xFFFFECB3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF3E0),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Icon(
+                        Icons.auto_fix_high,
+                        size: 16,
+                        color: Color(0xFFF57C00),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                              children: [
+                                const TextSpan(
+                                  text: 'From: ',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text: '"${correction['original']}"',
+                                  style: const TextStyle(
+                                    color: Color(0xFFD32F2F),
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                const TextSpan(text: ' → '),
+                                const TextSpan(
+                                  text: 'To: ',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text: '"${correction['corrected']}"',
+                                  style: const TextStyle(
+                                    color: Color(0xFF388E3C),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (correction['message'] != null) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              correction['message'],
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF666666),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegendItem(String text, Color color, int count) {
+    return Row(
+      children: [
+        Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 14,
+            color: Color(0xFF666666),
+          ),
+        ),
+        const Spacer(),
+        Text(
+          count.toString(),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _openAppSettings() async {
@@ -402,7 +755,7 @@ class _TrackingPageState extends State<TrackingPage> {
 
                 const SizedBox(height: 30),
 
-                // Error Message with improved styling
+                // Error Message
                 if (_errorMessage != null) ...[
                   Container(
                     width: double.infinity,
@@ -552,7 +905,7 @@ class _TrackingPageState extends State<TrackingPage> {
                         const SizedBox(height: 20),
                       ],
 
-                      // Main Recording Button (keeping your existing design)
+                      // Main Recording Button
                       ElevatedButton.icon(
                         onPressed: _isProcessing
                             ? null
@@ -578,7 +931,7 @@ class _TrackingPageState extends State<TrackingPage> {
 
                 const SizedBox(height: 30),
 
-                // Processing Indicator with improved styling
+                // Processing Indicator
                 if (_isProcessing) ...[
                   Container(
                     width: double.infinity,
@@ -632,7 +985,7 @@ class _TrackingPageState extends State<TrackingPage> {
                   ),
                 ],
 
-                // Transcribed Text Result with improved styling
+                // Transcribed Text Result
                 if (_transcribedText != null && !_isProcessing) ...[
                   Container(
                     width: double.infinity,
@@ -701,6 +1054,13 @@ class _TrackingPageState extends State<TrackingPage> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20),
+                ],
+
+                // NEW: Analysis Chart Section
+                if (_analysisResult != null && !_isProcessing) ...[
+                  _buildAnalysisChart(),
+                  const SizedBox(height: 30),
                 ],
 
                 const SizedBox(height: 30),
