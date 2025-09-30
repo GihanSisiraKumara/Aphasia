@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class TreatmentFivePage extends StatefulWidget {
   final String description;
@@ -11,12 +12,110 @@ class TreatmentFivePage extends StatefulWidget {
 
 class _TreatmentFivePageState extends State<TreatmentFivePage> {
   List<Product> productList = [
-    Product('assets/images/play_ground.jpg', 'Play Ground', 100,
-        " There are five people in the picture. Two boys are sitting on swings. A woman in a white dress is standing between the boys. She looks happy and is holding one swing chain. In the background, two people are sitting on a bench. The scene is outdoors on green grass. The sky is blue with some clouds. It appears to be a sunny day in a park or playground."),
-    Product('assets/images/dog.png', 'SS Gamage', 100,
-        " I'm highly motivated 25-year-old Computer Science undergraduate with a passion for full-stack development. Currently, we are developing a PDF converter app, showcasing skills in Flutter and Dart. Eager to refine our skills and make a meaningful impact, I'm aims to leverage our technical knowledge in professional settings.We hope that this app give you special features."),
-    // Product('assets/images/sisira.jpg', 'Sisira', 100, 'sd'),
+    Product(
+        'assets/images/play_ground.jpg',
+        'Play Ground',
+        100,
+        " There are five people in the picture. Two boys are sitting on swings. A woman in a white dress is standing between the boys. She looks happy and is holding one swing chain. In the background, two people are sitting on a bench. The scene is outdoors on green grass. The sky is blue with some clouds. It appears to be a sunny day in a park or playground.",
+        'play_ground.mp3'),
+    Product(
+        'assets/images/dog.png',
+        'SS Gamage',
+        100,
+        " I'm highly motivated 25-year-old Computer Science undergraduate with a passion for full-stack development. Currently, we are developing a PDF converter app, showcasing skills in Flutter and Dart. Eager to refine our skills and make a meaningful impact, I'm aims to leverage our technical knowledge in professional settings.We hope that this app give you special features.",
+        'gamage.mp3'),
   ];
+
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  int? _currentlyPlayingIndex;
+  bool _isPlaying = false;
+  PlayerState _playerState = PlayerState.stopped;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupAudioPlayer();
+  }
+
+  void _setupAudioPlayer() {
+    _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
+      if (mounted) {
+        setState(() {
+          _playerState = state;
+          _isPlaying = state == PlayerState.playing;
+          if (state == PlayerState.stopped || state == PlayerState.completed) {
+            _currentlyPlayingIndex = null;
+          }
+        });
+      }
+    });
+
+    _audioPlayer.onPlayerComplete.listen((event) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _currentlyPlayingIndex = null;
+          _playerState = PlayerState.stopped;
+        });
+      }
+    });
+  }
+
+  Future<void> _playAudio(String audioFileName, int index) async {
+    try {
+      if (_isPlaying && _currentlyPlayingIndex == index) {
+        // If clicking the same audio that's playing, stop it
+        await _audioPlayer.stop();
+        return;
+      }
+
+      // Stop any currently playing audio
+      if (_isPlaying) {
+        await _audioPlayer.stop();
+      }
+
+      // Play the new audio - using just the filename since we'll put files in assets/voice/
+      await _audioPlayer.play(AssetSource('voice/$audioFileName'));
+
+      setState(() {
+        _currentlyPlayingIndex = index;
+        _isPlaying = true;
+      });
+    } catch (e) {
+      print('Error playing audio: $e');
+      _showErrorSnackBar('Could not play audio: $audioFileName');
+    }
+  }
+
+  Future<void> _pauseAudio() async {
+    await _audioPlayer.pause();
+    setState(() {
+      _isPlaying = false;
+    });
+  }
+
+  Future<void> _stopAudio() async {
+    await _audioPlayer.stop();
+    setState(() {
+      _isPlaying = false;
+      _currentlyPlayingIndex = null;
+    });
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +171,9 @@ class _TreatmentFivePageState extends State<TreatmentFivePage> {
 
   Widget _buildListItem(BuildContext context, int index) {
     Product product = productList[index];
+    bool isCurrentPlaying = _currentlyPlayingIndex == index;
+    bool isThisPlaying = isCurrentPlaying && _isPlaying;
+
     return SizedBox(
       width: 350,
       height: 250,
@@ -101,7 +203,6 @@ class _TreatmentFivePageState extends State<TreatmentFivePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       'Try to describe the image',
@@ -119,26 +220,48 @@ class _TreatmentFivePageState extends State<TreatmentFivePage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const FeedbackBord(
-                        //             title: '',
-                        //           )),
-                        // );
-                      },
-                      style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue,
-                          disabledForegroundColor:
-                              Colors.grey.withOpacity(0.38),
-                          shadowColor: Colors.red,
-                          elevation: 5,
-                          textStyle: const TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold)),
-                      child: const Text('Get in Touch'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            if (isThisPlaying) {
+                              _stopAudio();
+                            } else {
+                              _playAudio(product.audioPath, index);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor:
+                                isThisPlaying ? Colors.red : Colors.blue,
+                            elevation: 5,
+                            textStyle: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                          icon: Icon(
+                            isThisPlaying ? Icons.stop : Icons.play_arrow,
+                          ),
+                          label: Text(
+                            isThisPlaying ? 'Stop Audio' : 'Play As Audio',
+                          ),
+                        ),
+                        if (isThisPlaying) ...[
+                          const SizedBox(width: 10),
+                          ElevatedButton.icon(
+                            onPressed: _pauseAudio,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.orange,
+                              elevation: 5,
+                              textStyle: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                            icon: const Icon(Icons.pause),
+                            label: const Text('Pause'),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 10),
                   ],
@@ -157,6 +280,8 @@ class Product {
   final String title;
   final double cost;
   final String description;
+  final String audioPath;
 
-  Product(this.imagePath, this.title, this.cost, this.description);
+  Product(
+      this.imagePath, this.title, this.cost, this.description, this.audioPath);
 }
