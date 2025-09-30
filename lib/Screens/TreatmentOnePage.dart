@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-
 class TreatmentOnePage extends StatefulWidget {
   const TreatmentOnePage({super.key});
 
@@ -11,16 +10,37 @@ class TreatmentOnePage extends StatefulWidget {
 
 class _TreatmentOnePageState extends State<TreatmentOnePage> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  
 
-  // List of vowels with their corresponding audio file paths
+  // List of vowels with their corresponding audio and animation paths
   final List<Map<String, String>> vowels = [
-    {'letter': 'A', 'audioPath': 'assets/voice/a.mp3'},
-    {'letter': 'E', 'audioPath': 'assets/voice/e.mp3'},
-    {'letter': 'I', 'audioPath': 'assets/voice/i.mp3'},
-    {'letter': 'O', 'audioPath': 'assets/voice/o.mp3'},
-    {'letter': 'U', 'audioPath': 'assets/voice/u.mp3'},
+    {
+      'letter': 'A',
+      'audioPath': 'assets/voice/a.mp3',
+      'animationPath': 'assets/animations/A.gif'
+    },
+    {
+      'letter': 'E',
+      'audioPath': 'assets/voice/e.mp3',
+      'animationPath': 'assets/animations/E.gif'
+    },
+    {
+      'letter': 'I',
+      'audioPath': 'assets/voice/i.mp3',
+      'animationPath': 'assets/animations/I.gif'
+    },
+    {
+      'letter': 'O',
+      'audioPath': 'assets/voice/o.mp3',
+      'animationPath': 'assets/animations/O.gif'
+    },
+    {
+      'letter': 'U',
+      'audioPath': 'assets/voice/u.mp3',
+      'animationPath': 'assets/animations/U.gif'
+    },
   ];
+
+  String? _currentAnimationPath; // Track current animation
 
   @override
   void dispose() {
@@ -28,21 +48,20 @@ class _TreatmentOnePageState extends State<TreatmentOnePage> {
     super.dispose();
   }
 
-  // Play vowel pronunciation
-  Future<void> _playVowelSound(String audioPath) async {
+  // Play vowel pronunciation and show animation
+  Future<void> _playVowelSound(String audioPath, String animationPath) async {
     try {
-      // Convert "assets/voice/a.mp3" → "voice/a.mp3"
-      final assetPath = audioPath.replaceFirst('assets/', '');
+      setState(() {
+        _currentAnimationPath = animationPath; // Set current animation
+      });
 
+      final assetPath = audioPath.replaceFirst('assets/', '');
       await _audioPlayer.setSourceAsset(assetPath);
       await _audioPlayer.resume();
     } catch (e) {
       _showSnackBar('Error playing sound: $e');
     }
   }
-
-
-
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -113,6 +132,37 @@ class _TreatmentOnePageState extends State<TreatmentOnePage> {
                 ),
               ),
 
+              // Lip Animation Display
+              Container(
+                height: 200, // Adjust height as needed
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: _currentAnimationPath != null
+                    ? Image.asset(
+                        _currentAnimationPath!,
+                        fit: BoxFit.contain,
+                      )
+                    : const Center(
+                        child: Text(
+                          'Tap a vowel to see pronunciation',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF666666),
+                          ),
+                        ),
+                      ),
+              ),
+
               // Vowel buttons
               Expanded(
                 child: ListView.builder(
@@ -126,7 +176,8 @@ class _TreatmentOnePageState extends State<TreatmentOnePage> {
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () => _playVowelSound(vowel['audioPath']!),
+                          onTap: () => _playVowelSound(
+                              vowel['audioPath']!, vowel['animationPath']!),
                           child: Container(
                             height: 60,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -155,9 +206,6 @@ class _TreatmentOnePageState extends State<TreatmentOnePage> {
                   },
                 ),
               ),
-
-              // Upload voice section
-              
             ],
           ),
         ),

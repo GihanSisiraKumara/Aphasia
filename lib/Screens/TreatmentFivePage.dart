@@ -11,8 +11,8 @@ class TreatmentFivePage extends StatefulWidget {
 
 class _TreatmentFivePageState extends State<TreatmentFivePage> {
   List<Product> productList = [
-    Product('assets/images/dog.png', 'Sisira Kumara', 100,
-        " I'm highly motivated 24-year-old Computer Science undergraduate with a passion for full-stack development. Currently, we are developing a PDF converter app, showcasing skills in Flutter and Dart. Eager to refine our skills and make a meaningful impact, I'm aims to leverage our technical knowledge in professional settings.We hope that this app give you special features."),
+    Product('assets/images/play_ground.jpg', 'Play Ground', 100,
+        " There are five people in the picture. Two boys are sitting on swings. A woman in a white dress is standing between the boys. She looks happy and is holding one swing chain. In the background, two people are sitting on a bench. The scene is outdoors on green grass. The sky is blue with some clouds. It appears to be a sunny day in a park or playground."),
     Product('assets/images/dog.png', 'SS Gamage', 100,
         " I'm highly motivated 25-year-old Computer Science undergraduate with a passion for full-stack development. Currently, we are developing a PDF converter app, showcasing skills in Flutter and Dart. Eager to refine our skills and make a meaningful impact, I'm aims to leverage our technical knowledge in professional settings.We hope that this app give you special features."),
     // Product('assets/images/sisira.jpg', 'Sisira', 100, 'sd'),
@@ -104,7 +104,7 @@ class _TreatmentFivePageState extends State<TreatmentFivePage> {
                   //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'BSc (Hons) in Computer Science',
+                      'Try to describe the image',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),

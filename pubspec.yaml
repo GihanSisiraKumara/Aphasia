@@ -83,12 +83,39 @@ flutter:
     - assets/animations/prueba - doctores-freepik.json
     - assets/animations/share with friends.json
     - assets/animations/Appointment booking with smartphone.json
+    - assets/animations/A.gif
+    - assets/animations/B.gif
+    - assets/animations/C.gif
+    - assets/animations/D.gif
+    - assets/animations/E.gif
+    - assets/animations/F.gif
+    - assets/animations/G.gif
+    - assets/animations/H.gif
+    - assets/animations/I.gif
+    - assets/animations/J.gif
+    - assets/animations/K.gif
+    - assets/animations/L.gif
+    - assets/animations/M.gif
+    - assets/animations/N.gif
+    - assets/animations/O.gif
+    - assets/animations/P.gif
+    - assets/animations/Q.gif
+    - assets/animations/R.gif
+    - assets/animations/S.gif
+    - assets/animations/T.gif
+    - assets/animations/U.gif
+    - assets/animations/V.gif
+    - assets/animations/W.gif
+    - assets/animations/X.gif
+    - assets/animations/Y.gif
+    - assets/animations/Z.gif
     - assets/images/treatmentimg.png
     - assets/images/dog.png
     - assets/images/chicken.png
     - assets/images/bird.png
     - assets/images/sheep.png
     - assets/images/goat.png
+    - assets/images/play_ground.jpg
     - assets/images/google_logo.png
     - assets/jif/air_fill.gif
     - assets/jif/tongue_pressuring.png

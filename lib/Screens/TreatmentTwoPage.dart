@@ -15,33 +15,35 @@ class _TreatmentTwoPageState extends State<TreatmentTwoPage> {
 
   // List of vowels with their corresponding audio file paths
   final List<Map<String, String>> vowels = [
-    {'letter': 'A', 'audioPath': 'assets/voice/a.mp3'},
-    {'letter': 'B', 'audioPath': 'assets/voice/b.mp3'},
-    {'letter': 'C', 'audioPath': 'assets/voice/c.mp3'},
-    {'letter': 'D', 'audioPath': 'assets/voice/d.mp3'},
-    {'letter': 'E', 'audioPath': 'assets/voice/e.mp3'},
-    {'letter': 'F', 'audioPath': 'assets/voice/f.mp3'},
-    {'letter': 'G', 'audioPath': 'assets/voice/g.mp3'},
-    {'letter': 'H', 'audioPath': 'assets/voice/h.mp3'},
-    {'letter': 'I', 'audioPath': 'assets/voice/i.mp3'},
-    {'letter': 'J', 'audioPath': 'assets/voice/j.mp3'},
-    {'letter': 'K', 'audioPath': 'assets/voice/k.mp3'},
-    {'letter': 'L', 'audioPath': 'assets/voice/l.mp3'},
-    {'letter': 'M', 'audioPath': 'assets/voice/m.mp3'},
-    {'letter': 'N', 'audioPath': 'assets/voice/n.mp3'},
-    {'letter': 'O', 'audioPath': 'assets/voice/o.mp3'},
-    {'letter': 'P', 'audioPath': 'assets/voice/p.mp3'},
-    {'letter': 'Q', 'audioPath': 'assets/voice/q.mp3'},
-    {'letter': 'R', 'audioPath': 'assets/voice/r.mp3'},
-    {'letter': 'S', 'audioPath': 'assets/voice/s.mp3'},
-    {'letter': 'T', 'audioPath': 'assets/voice/t.mp3'},
-    {'letter': 'U', 'audioPath': 'assets/voice/u.mp3'},
-    {'letter': 'V', 'audioPath': 'assets/voice/v.mp3'},
-    {'letter': 'W', 'audioPath': 'assets/voice/w.mp3'},
-    {'letter': 'X', 'audioPath': 'assets/voice/x.mp3'},
-    {'letter': 'Y', 'audioPath': 'assets/voice/y.mp3'},
-    {'letter': 'Z', 'audioPath': 'assets/voice/z.mp3'},
+    {'letter': 'A', 'audioPath': 'assets/voice/a.mp3', 'animationPath': 'assets/animations/A.gif'},
+    {'letter': 'B', 'audioPath': 'assets/voice/b.mp3', 'animationPath': 'assets/animations/B.gif'},
+    {'letter': 'C', 'audioPath': 'assets/voice/c.mp3', 'animationPath': 'assets/animations/C.gif'},
+    {'letter': 'D', 'audioPath': 'assets/voice/d.mp3', 'animationPath': 'assets/animations/D.gif'},
+    {'letter': 'E', 'audioPath': 'assets/voice/e.mp3', 'animationPath': 'assets/animations/E.gif'},
+    {'letter': 'F', 'audioPath': 'assets/voice/f.mp3', 'animationPath': 'assets/animations/F.gif'},
+    {'letter': 'G', 'audioPath': 'assets/voice/g.mp3', 'animationPath': 'assets/animations/G.gif'},
+    {'letter': 'H', 'audioPath': 'assets/voice/h.mp3', 'animationPath': 'assets/animations/H.gif'},
+    {'letter': 'I', 'audioPath': 'assets/voice/i.mp3', 'animationPath': 'assets/animations/I.gif'},
+    {'letter': 'J', 'audioPath': 'assets/voice/j.mp3', 'animationPath': 'assets/animations/J.gif'},
+    {'letter': 'K', 'audioPath': 'assets/voice/k.mp3', 'animationPath': 'assets/animations/K.gif'},
+    {'letter': 'L', 'audioPath': 'assets/voice/l.mp3', 'animationPath': 'assets/animations/L.gif'},
+    {'letter': 'M', 'audioPath': 'assets/voice/m.mp3', 'animationPath': 'assets/animations/M.gif'},
+    {'letter': 'N', 'audioPath': 'assets/voice/n.mp3', 'animationPath': 'assets/animations/N.gif'},
+    {'letter': 'O', 'audioPath': 'assets/voice/o.mp3', 'animationPath': 'assets/animations/O.gif'},
+    {'letter': 'P', 'audioPath': 'assets/voice/p.mp3', 'animationPath': 'assets/animations/P.gif'},
+    {'letter': 'Q', 'audioPath': 'assets/voice/q.mp3', 'animationPath': 'assets/animations/Q.gif'},
+    {'letter': 'R', 'audioPath': 'assets/voice/r.mp3', 'animationPath': 'assets/animations/R.gif'},
+    {'letter': 'S', 'audioPath': 'assets/voice/s.mp3', 'animationPath': 'assets/animations/S.gif'},
+    {'letter': 'T', 'audioPath': 'assets/voice/t.mp3', 'animationPath': 'assets/animations/T.gif'},
+    {'letter': 'U', 'audioPath': 'assets/voice/u.mp3', 'animationPath': 'assets/animations/U.gif'},
+    {'letter': 'V', 'audioPath': 'assets/voice/v.mp3', 'animationPath': 'assets/animations/V.gif'},
+    {'letter': 'W', 'audioPath': 'assets/voice/w.mp3', 'animationPath': 'assets/animations/W.gif'},
+    {'letter': 'X', 'audioPath': 'assets/voice/x.mp3', 'animationPath': 'assets/animations/X.gif'},
+    {'letter': 'Y', 'audioPath': 'assets/voice/y.mp3', 'animationPath': 'assets/animations/Y.gif'},
+    {'letter': 'Z', 'audioPath': 'assets/voice/z.mp3', 'animationPath': 'assets/animations/Z.gif'},
   ];
+
+  String? _currentAnimationPath; // Track current animation
 
   @override
   void dispose() {
@@ -49,21 +51,20 @@ class _TreatmentTwoPageState extends State<TreatmentTwoPage> {
     super.dispose();
   }
 
-  // Play vowel pronunciation
-  Future<void> _playVowelSound(String audioPath) async {
+  // Play vowel pronunciation and show animation
+  Future<void> _playVowelSound(String audioPath, String animationPath) async {
     try {
-      // Convert "assets/voice/a.mp3" → "voice/a.mp3"
-      final assetPath = audioPath.replaceFirst('assets/', '');
+      setState(() {
+        _currentAnimationPath = animationPath; // Set current animation
+      });
 
+      final assetPath = audioPath.replaceFirst('assets/', '');
       await _audioPlayer.setSourceAsset(assetPath);
       await _audioPlayer.resume();
     } catch (e) {
       _showSnackBar('Error playing sound: $e');
     }
   }
-
-
-
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -125,13 +126,44 @@ class _TreatmentTwoPageState extends State<TreatmentTwoPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
-                  'Do the sound for 10 rounds with the sound repeated 3 times in each rounds.',
+                  'Do the sound for 10 rounds with the sound repeated 3 times in each round.',
                   style: TextStyle(
                     fontSize: 14,
                     color: Color(0xFF666666),
                   ),
                   textAlign: TextAlign.center,
                 ),
+              ),
+
+              // Lip Animation Display
+              Container(
+                height: 200, // Adjust height as needed
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: _currentAnimationPath != null
+                    ? Image.asset(
+                        _currentAnimationPath!,
+                        fit: BoxFit.contain,
+                      )
+                    : const Center(
+                        child: Text(
+                          'Tap a Letter to see pronunciation',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF666666),
+                          ),
+                        ),
+                      ),
               ),
 
               // Vowel buttons
@@ -147,7 +179,8 @@ class _TreatmentTwoPageState extends State<TreatmentTwoPage> {
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () => _playVowelSound(vowel['audioPath']!),
+                          onTap: () => _playVowelSound(
+                              vowel['audioPath']!, vowel['animationPath']!),
                           child: Container(
                             height: 60,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -176,9 +209,6 @@ class _TreatmentTwoPageState extends State<TreatmentTwoPage> {
                   },
                 ),
               ),
-
-             
-              
             ],
           ),
         ),
