@@ -19,11 +19,29 @@ class _TreatmentFivePageState extends State<TreatmentFivePage> {
         " There are five people in the picture. Two boys are sitting on swings. A woman in a white dress is standing between the boys. She looks happy and is holding one swing chain. In the background, two people are sitting on a bench. The scene is outdoors on green grass. The sky is blue with some clouds. It appears to be a sunny day in a park or playground.",
         'play_ground.mp3'),
     Product(
-        'assets/images/dog.png',
-        'SS Gamage',
+        'assets/images/city.png',
+        'City Views',
         100,
-        " I'm highly motivated 25-year-old Computer Science undergraduate with a passion for full-stack development. Currently, we are developing a PDF converter app, showcasing skills in Flutter and Dart. Eager to refine our skills and make a meaningful impact, I'm aims to leverage our technical knowledge in professional settings.We hope that this app give you special features.",
-        'gamage.mp3'),
+        "This is a photo of a city street. Tall buildings line both sides. People are crossing the street at a crosswalk. Cars are stopped at the traffic lights. The sky looks cloudy and gray. Bright lights from shops and cars are visible. It seems to be either early morning or late afternoon. The street is busy with pedestrians and vehicles.",
+        'city1.mp3'),
+    Product(
+        'assets/images/school.png',
+        'School View',
+        100,
+        "This is a classroom scene with a teacher and several students. The teacher is leaning over a desk, helping a group of four students who are focused on a laptop. Other students in the background are engaged with their own laptops. The room is well-lit with natural light from large windows. The atmosphere looks studious and collaborative.",
+        'school.mp3'),
+    Product(
+        'assets/images/work.png',
+        'Work View',
+        100,
+        "This image shows a group of five people working together around a table in a modern office. One person is standing and explaining something on a laptop. Others are seated, listening and engaged in discussion. The room has large windows letting in natural light. The atmosphere appears collaborative and focused.",
+        'work.mp3'),
+        Product(
+        'assets/images/beach.png',
+        'Beach View',
+        100,
+        "The image captures a lively scene of people joyfully running into the sparkling sea at a beautiful beach. The sandy shores are dotted with footprints, leading to the clear, shimmering water where the group is splashing. In the background, majestic mountains rise under a bright blue sky with scattered clouds, adding a stunning natural backdrop. The sunlight reflects off the waves, creating a vibrant and inviting atmosphere.",
+        'beach.mp3'),
   ];
 
   final AudioPlayer _audioPlayer = AudioPlayer();

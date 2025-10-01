@@ -6,6 +6,7 @@ import 'package:record/record.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -19,12 +20,39 @@ class TrackingPage extends StatefulWidget {
 
 class _TrackingPageState extends State<TrackingPage> {
   final AudioRecorder _audioRecorder = AudioRecorder();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   bool _isRecording = false;
   bool _isProcessing = false;
   String? _recordingPath;
   String? _transcribedText;
   String? _errorMessage;
   Map<String, dynamic>? _analysisResult;
+  String? _currentUserId;
+  String? _currentUserEmail;
+  User? _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+
+  void _getCurrentUser() {
+    final User? user = _auth.currentUser;
+    if (user != null) {
+      setState(() {
+        _currentUser = user;
+        _currentUserId = user.uid;
+        _currentUserEmail = user.email;
+      });
+    } else {
+      setState(() {
+        _errorMessage = 'User not authenticated. Please log in again.';
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -59,6 +87,17 @@ class _TrackingPageState extends State<TrackingPage> {
 
   Future<void> _startRecording() async {
     try {
+      // Check if user is authenticated
+      if (_currentUser == null) {
+        _getCurrentUser();
+        if (_currentUser == null) {
+          setState(() {
+            _errorMessage = 'Please log in to record audio.';
+          });
+          return;
+        }
+      }
+
       setState(() {
         _errorMessage = null;
         _transcribedText = null;
@@ -130,6 +169,11 @@ class _TrackingPageState extends State<TrackingPage> {
     });
 
     try {
+      // Check authentication again before processing
+      if (_currentUser == null) {
+        throw Exception('User not authenticated. Please log in again.');
+      }
+
       // Verify file exists and has content
       final audioFile = File(audioPath);
       if (!await audioFile.exists()) {
@@ -142,26 +186,55 @@ class _TrackingPageState extends State<TrackingPage> {
       }
 
       // Step 1: Upload audio file to Firebase Storage
-      final storageRef = FirebaseStorage.instance.ref().child(
-          'voice_recordings/${DateTime.now().millisecondsSinceEpoch}.aac');
+      final String fileName =
+          'recording_${DateTime.now().millisecondsSinceEpoch}.aac';
+      final Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('voice_recordings')
+          .child(_currentUserId!)
+          .child(fileName);
 
-      final uploadTask = storageRef.putFile(
+      print('Uploading file to: voice_recordings/${_currentUserId!}/$fileName');
+
+      // Upload the file
+      final UploadTask uploadTask = storageRef.putFile(
         audioFile,
         SettableMetadata(
           contentType: 'audio/aac',
+          customMetadata: {
+            'userId': _currentUserId!,
+            'userEmail': _currentUserEmail ?? '',
+            'uploadedAt': DateTime.now().toIso8601String(),
+          },
         ),
       );
 
-      final uploadSnapshot = await uploadTask;
-      final audioUrl = await uploadSnapshot.ref.getDownloadURL();
+      // Monitor upload progress
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        print(
+            'Upload progress: ${snapshot.bytesTransferred}/${snapshot.totalBytes}');
+      });
+
+      // Wait for upload to complete
+      final TaskSnapshot uploadSnapshot = await uploadTask;
+
+      if (uploadSnapshot.state == TaskState.success) {
+        print('Upload completed successfully');
+      } else {
+        throw Exception('Upload failed with state: ${uploadSnapshot.state}');
+      }
+
+      final String audioUrl = await uploadSnapshot.ref.getDownloadURL();
+      print('Audio URL: $audioUrl');
 
       // Step 2: Send audio URL to your Python backend for speech-to-text
-      final transcribedText = await _transcribeAudio(audioUrl);
+      final String transcribedText = await _transcribeAudio(audioUrl);
 
-      // NEW: Step 3: Analyze the transcribed text for grammar errors
-      final analysisResult = await _analyzeText(transcribedText);
+      // Step 3: Analyze the transcribed text for grammar errors
+      final Map<String, dynamic> analysisResult =
+          await _analyzeText(transcribedText);
 
-      // Step 4: Save transcribed text and analysis to Firestore
+      // Step 4: Save transcribed text and analysis to Firestore WITH USER ID
       await _saveToFirestore(transcribedText, audioUrl, analysisResult);
 
       setState(() {
@@ -173,6 +246,7 @@ class _TrackingPageState extends State<TrackingPage> {
 
       _showSnackBar('Voice recording processed and analyzed successfully!');
     } catch (e) {
+      print('Error in _processVoiceRecording: $e');
       setState(() {
         _isProcessing = false;
         _errorMessage = 'Failed to process recording: ${e.toString()}';
@@ -180,12 +254,10 @@ class _TrackingPageState extends State<TrackingPage> {
     }
   }
 
-  // NEW: Text analysis method
   Future<Map<String, dynamic>> _analyzeText(String text) async {
     const String analysisUrl =
         'https://text-analysis-backend-4.onrender.com/analyze-text';
 
-    // Add retry logic with longer timeouts
     final timeouts = [
       const Duration(seconds: 45),
       const Duration(seconds: 60),
@@ -221,14 +293,12 @@ class _TrackingPageState extends State<TrackingPage> {
           throw TimeoutException(
               'Text analysis timed out after ${attempt + 1} attempts');
         }
-        // Wait before retrying
         await Future.delayed(Duration(seconds: 5 * (attempt + 1)));
       } catch (e) {
         print('Text analysis attempt ${attempt + 1} failed: $e');
         if (attempt == timeouts.length - 1) {
           throw Exception('Text analysis error: $e');
         }
-        // Wait before retrying
         await Future.delayed(Duration(seconds: 5 * (attempt + 1)));
       }
     }
@@ -290,24 +360,36 @@ class _TrackingPageState extends State<TrackingPage> {
 
   int min(int a, int b) => a < b ? a : b;
 
-  // UPDATED: Save both transcription and analysis
+  // UPDATED: Save with user ID
   Future<void> _saveToFirestore(String transcription, String audioUrl,
       Map<String, dynamic> analysis) async {
     try {
-      await FirebaseFirestore.instance.collection('voice_transcriptions').add({
+      if (_currentUserId == null) {
+        throw Exception('User not authenticated');
+      }
+
+      await _firestore.collection('voice_transcriptions').add({
+        'user_id': _currentUserId,
+        'user_email': _currentUserEmail,
         'transcription': transcription,
         'audio_url': audioUrl,
         'timestamp': FieldValue.serverTimestamp(),
         'treatment_page': 'Treatment Eight',
         'analysis_result': analysis,
       });
+
+      print('Successfully saved to Firestore');
     } catch (e) {
+      print('Error saving to Firestore: $e');
       throw Exception('Failed to save to Firestore: ${e.toString()}');
     }
   }
 
-  // NEW: Build Analysis Chart
+  // ... rest of your existing UI methods (_buildAnalysisChart, _buildLegendItem, etc.)
+  // Keep all the UI methods exactly as they were in your original code
+
   Widget _buildAnalysisChart() {
+    // Keep your existing _buildAnalysisChart method exactly as it was
     if (_analysisResult == null) return Container();
 
     final wrongWordCount = _analysisResult!['wrong_word_count'] ?? 0;
@@ -1057,7 +1139,7 @@ class _TrackingPageState extends State<TrackingPage> {
                   const SizedBox(height: 20),
                 ],
 
-                // NEW: Analysis Chart Section
+                // Analysis Chart Section
                 if (_analysisResult != null && !_isProcessing) ...[
                   _buildAnalysisChart(),
                   const SizedBox(height: 30),

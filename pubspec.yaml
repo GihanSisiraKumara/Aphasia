@@ -110,6 +110,7 @@ flutter:
     - assets/animations/Y.gif
     - assets/animations/Z.gif
     - assets/images/treatmentimg.png
+    - assets/images/back2.jpg
     - assets/images/dog.png
     - assets/images/chicken.png
     - assets/images/bird.png
@@ -117,6 +118,10 @@ flutter:
     - assets/images/goat.png
     - assets/images/play_ground.jpg
     - assets/images/google_logo.png
+    - assets/images/city.png
+    - assets/images/school.png
+    - assets/images/work.png
+    - assets/images/beach.png
     - assets/jif/air_fill.gif
     - assets/jif/tongue_pressuring.png
     - assets/jif/circular_motion.png
@@ -173,7 +178,15 @@ flutter:
     - assets/voice/goat.mp3
     - assets/voice/play_ground.mp3
     - assets/voice/gamage.mp3
+    - assets/voice/city1.mp3
+    - assets/voice/school.mp3
+    - assets/voice/work.mp3
+    - assets/voice/beach.mp3
     - assets/musick/Shape_of_You.mp3
+    - assets/musick/I_Found_a_Girl.mp3
+    - assets/musick/Alone.mp3
+    - assets/musick/The_Spectre.mp3
+    - assets/musick/On_My_Way.mp3
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

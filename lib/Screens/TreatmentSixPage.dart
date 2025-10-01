@@ -1,3 +1,4 @@
+import 'package:finalproject/DashbordMenu/TrackingPage.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -17,10 +18,16 @@ class _TreatmentSixPageState extends State<TreatmentSixPage> {
   Map<int, Duration> positions = {}; // Track position for each item
 
   List<Product> productList = [
-    Product('musick/Shape_of_You.mp3', 'Sisira Kumara', 100,
-        " I'm highly motivated 24-year-old Computer Science undergraduate with a passion for full-stack development. Currently, we are developing a PDF converter app, showcasing skills in Flutter and Dart. Eager to refine our skills and make a meaningful impact, I'm aims to leverage our technical knowledge in professional settings.We hope that this app give you special features."),
-    Product('musick/Shape_of_You.mp3', 'SS Gamage', 100,
-        " I'm highly motivated 25-year-old Computer Science undergraduate with a passion for full-stack development. Currently, we are developing a PDF converter app, showcasing skills in Flutter and Dart. Eager to refine our skills and make a meaningful impact, I'm aims to leverage our technical knowledge in professional settings.We hope that this app give you special features."),
+    Product('musick/Shape_of_You.mp3', 'Let\'s listen song', 100,
+        " This is the sixth treatment of the treatments. There are several songs for you. Please click the play button and listen to the songs carefully. After that, try to understand the song and try to sing along. If you forget the song, click the play button again. Try this treatment until you understand the songs."),
+    Product('musick/I_Found_a_Girl.mp3', 'Let\'s listen song', 100,
+        " This is the sixth treatment of the treatments. There are several songs for you. Please click the play button and listen to the songs carefully. After that, try to understand the song and try to sing along. If you forget the song, click the play button again. Try this treatment until you understand the songs."),
+    Product('musick/Alone.mp3', 'Let\'s listen song', 100,
+        " This is the sixth treatment of the treatments. There are several songs for you. Please click the play button and listen to the songs carefully. After that, try to understand the song and try to sing along. If you forget the song, click the play button again. Try this treatment until you understand the songs."),
+    Product('musick/The_Spectre.mp3', 'Let\'s listen song', 100,
+        " This is the sixth treatment of the treatments. There are several songs for you. Please click the play button and listen to the songs carefully. After that, try to understand the song and try to sing along. If you forget the song, click the play button again. Try this treatment until you understand the songs."),
+    Product('musick/On_My_Way.mp3', 'Let\'s listen song', 100,
+        " This is the sixth treatment of the treatments. There are several songs for you. Please click the play button and listen to the songs carefully. After that, try to understand the song and try to sing along. If you forget the song, click the play button again. Try this treatment until you understand the songs."),
   ];
 
   @override
@@ -227,7 +234,7 @@ class _TreatmentSixPageState extends State<TreatmentSixPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Music icon
-                    Icon(
+                    const Icon(
                       Icons.music_note,
                       size: 60,
                       color: Colors.white,
@@ -333,7 +340,7 @@ class _TreatmentSixPageState extends State<TreatmentSixPage> {
                 child: Column(
                   children: [
                     const Text(
-                      'BSc (Hons) in Computer Science',
+                      'Let\'s Start the Treatment',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
@@ -350,13 +357,11 @@ class _TreatmentSixPageState extends State<TreatmentSixPage> {
                     const SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const FeedbackBord(
-                        //             title: '',
-                        //           )),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const TrackingPage()),
+                        );
                       },
                       style: TextButton.styleFrom(
                           foregroundColor: Colors.white,
@@ -367,7 +372,7 @@ class _TreatmentSixPageState extends State<TreatmentSixPage> {
                           elevation: 5,
                           textStyle: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold)),
-                      child: const Text('Get in Touch'),
+                      child: const Text('Check Your Progress'),
                     ),
                     const SizedBox(height: 10),
                   ],
