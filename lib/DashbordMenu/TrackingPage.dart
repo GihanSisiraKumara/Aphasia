@@ -385,17 +385,14 @@ class _TrackingPageState extends State<TrackingPage> {
     }
   }
 
-  // ... rest of your existing UI methods (_buildAnalysisChart, _buildLegendItem, etc.)
-  // Keep all the UI methods exactly as they were in your original code
-
   Widget _buildAnalysisChart() {
-    // Keep your existing _buildAnalysisChart method exactly as it was
     if (_analysisResult == null) return Container();
 
     final wrongWordCount = _analysisResult!['wrong_word_count'] ?? 0;
     final totalWords = _analysisResult!['total_words'] ?? 1;
     final correctWordCount = totalWords - wrongWordCount;
     final confidence = (_analysisResult!['confidence'] ?? 0.0) * 100;
+    final correctedSentence = _analysisResult!['corrected_sentence'] ?? '';
 
     return Container(
       width: double.infinity,
@@ -554,12 +551,70 @@ class _TrackingPageState extends State<TrackingPage> {
             ),
           ],
 
+          // NEW: Display Full Corrected Sentence
+          if (wrongWordCount > 0 && correctedSentence.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E8),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFC8E6C9),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4CAF50),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Icon(
+                      Icons.check_circle,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Full Corrected Sentence:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Color(0xFF2E7D32),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          correctedSentence,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF2E7D32),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
           // Corrections List
           if (_analysisResult!['corrections'] != null &&
               (_analysisResult!['corrections'] as List).isNotEmpty) ...[
             const SizedBox(height: 16),
             const Text(
-              'Corrections:',
+              'Detailed Corrections:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
