@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/main_screen/Result_review.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -803,7 +804,12 @@ class _DashbordState extends State<Dashbord> {
             subtitle: Text('Accuracy: $accuracy% • Confidence: $confidence%'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // Could navigate to detailed view
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Result_review(),
+                ),
+              );
             },
           );
         },
