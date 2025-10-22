@@ -38,6 +38,51 @@ class _TreatmentFourPageState extends State<TreatmentFourPage> {
       'audioPath': 'assets/voice/goat.mp3',
       'imagePath': 'assets/images/goat.png',
     },
+    {
+      'name': 'Boy',
+      'audioPath': 'assets/voice/boy.mp3',
+      'imagePath': 'assets/images/boy.jpg',
+    },
+    {
+      'name': 'Girl',
+      'audioPath': 'assets/voice/girl.mp3',
+      'imagePath': 'assets/images/girl.jpg',
+    },
+    {
+      'name': 'Doctor',
+      'audioPath': 'assets/voice/doctor.mp3',
+      'imagePath': 'assets/images/doctor.jpg',
+    },
+    {
+      'name': 'Driver',
+      'audioPath': 'assets/voice/driver.mp3',
+      'imagePath': 'assets/images/driver.jpg',
+    },
+    {
+      'name': 'Teacher',
+      'audioPath': 'assets/voice/teacher.mp3',
+      'imagePath': 'assets/images/teacher.jpg',
+    },
+    {
+      'name': 'House',
+      'audioPath': 'assets/voice/house.mp3',
+      'imagePath': 'assets/images/house.jpg',
+    },
+    {
+      'name': 'Hospital',
+      'audioPath': 'assets/voice/hospital.mp3',
+      'imagePath': 'assets/images/hospital.jpeg',
+    },
+    {
+      'name': 'Bus',
+      'audioPath': 'assets/voice/bus.mp3',
+      'imagePath': 'assets/images/bus.jpeg',
+    },
+    {
+      'name': 'Car',
+      'audioPath': 'assets/voice/car.mp3',
+      'imagePath': 'assets/images/car.jpeg',
+    },
   ];
 
   @override
