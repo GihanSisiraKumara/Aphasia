@@ -240,7 +240,7 @@ class _Result_reviewState extends State<Result_review> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 5),
                     GestureDetector(
                       onTap: () {
                         setState(() {

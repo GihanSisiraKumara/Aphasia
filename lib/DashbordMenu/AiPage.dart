@@ -201,11 +201,11 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
   List<String> _getKeywords() {
     return [
       'hello',
-      'hi',
+      'how is my treatment today',
+      'is my speaking good',
       'hey',
       'help',
       'what',
-      'how',
       'weather',
       'time',
       'date',
@@ -239,11 +239,11 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
   List<String> _getResponses() {
     return [
       'Hello there! How can I assist you today?',
-      'Hi! Nice to meet you. What would you like to know?',
+      'I can provide general information about treatments, but please consult healthcare professionals for medical advice. You are doing several sessions of treatment and your progress is good!',
+      'Hi! that is Nice.',
       'Hey! I\'m here to help. What\'s on your mind?',
       'I\'m here to help! You can ask me about various topics.',
       'I can help you with information, answer questions, and have conversations.',
-      'I can assist you with various tasks and answer your questions.',
       'I don\'t have access to current weather data, but you can check your local weather app!',
       'I don\'t have access to real-time data, but you can check your device\'s clock.',
       'I don\'t have access to real-time data, but you can check your device\'s calendar.',
@@ -255,7 +255,7 @@ class _AiPageState extends State<AiPage> with TickerProviderStateMixin {
       'I can help answer questions, provide information, and have conversations on various topics.',
       'I can assist with information, answer questions, help with basic tasks, and engage in conversations.',
       'I\'m designed to understand and respond to your questions effectively.',
-      'I can communicate through text and voice to help you with various inquiries.',
+      'Hi! that is Nice. But remember, practice makes perfect!',
       'I can process your questions and provide helpful responses.',
       'I love having conversations! It helps me assist you better.',
       'Voice chat allows for natural communication and hands-free interaction.',
