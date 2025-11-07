@@ -17,6 +17,10 @@ Focus Areas: AI in Healthcare, Mobile Computing, Speech Therapy, Accessibility, 
 <img width="1135" height="597" alt="image" src="https://github.com/user-attachments/assets/ec3cf0dd-6957-4ccb-8897-384909dc9b05" />
 <img width="1137" height="592" alt="image" src="https://github.com/user-attachments/assets/a1a792c2-572d-4fe7-9509-c0f748afbda7" />
 <img width="1137" height="587" alt="image" src="https://github.com/user-attachments/assets/417633bb-9082-46b5-9f3f-7eef784d9a10" />
+<img width="1816" height="838" alt="image" src="https://github.com/user-attachments/assets/5bdd2975-6641-418a-ad29-dc7546367a66" />
+<img width="1812" height="897" alt="image" src="https://github.com/user-attachments/assets/72d4c33f-7092-4f5e-a53c-9ce7a6051f22" />
+
+
 
 
 
