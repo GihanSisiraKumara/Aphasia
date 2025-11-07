@@ -1,16 +1,14 @@
-# finalproject
+# Enhancing the Accessibility of AI-Based Speech Therapy Applications through Mobile Integration
 
 A new Flutter project.
 
-## Getting Started
+## Final Year Research Project | NSBM Green University
 
-This project is a starting point for a Flutter application.
+This project focuses on developing an AI-powered mobile application designed to support speech rehabilitation for stroke patients suffering from aphasia. The system integrates Deep Reinforcement Learning (DRL) and speech recognition technologies to deliver personalized, adaptive, and offline-capable therapy sessions directly through mobile devices.
 
-A few resources to get you started if this is your first Flutter project:
+Built with Flutter (Dart) for cross-platform accessibility, Python (Flask) for natural language processing, and Firebase for secure cloud data management, the app provides real-time speech-to-text conversion, grammar correction, and interactive visual feedback. It enables users to practice speech exercises anytime, anywhere — even without an internet connection — making therapy more inclusive for patients in remote or low-resource environments.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+The solution was tested and validated with strong results in usability, accuracy, and offline performance, marking a significant step toward making AI-driven tele-rehabilitation more accessible and patient-centered.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Key Technologies: Flutter, Dart, Python (Flask), Firebase, Speech Recognition, NLP, Deep Reinforcement Learning (DRL)
+Focus Areas: AI in Healthcare, Mobile Computing, Speech Therapy, Accessibility, Human-Centered Design
